@@ -1,0 +1,27 @@
+// quickchart.io API can make a stylistic chart using next
+
+{
+  type: 'bar',
+    data: {
+    labels: ['Autumn 2022', 'Spring 2023', 'Autumn 2023', 'Spring 2024'],
+      datasets: [{
+        label: 'Nominal ects',
+        backgroundColor: 'rgba(100,10,220,0.5)',
+        borderColor: 'rgb(100,10,255)',
+        borderWidth: 1,
+        data: [30, 30, 30, 30]
+      }, {
+        backgroundColor: 'rgba(150,250,150,0.5)',
+        borderColor: 'rgb(100,10,255)',
+        borderWidth: 1,
+        label: 'Completed ects',
+        data: [28, 30, 31, 44]
+      }]
+  },
+  options: {
+    title: {
+      display: true,
+        text: 'Study Progress: JH',
+          }
+  }
+}

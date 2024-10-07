@@ -1,0 +1,238 @@
+openapi: 3.0.0
+
+info:
+  version: "1.0.0"
+  title: "ParrotNotes API"
+  description: "API that allows users to make TODO memory lists"
+  termsOfService: http://smartbear.com/website-terms-of-use
+  contact:
+    name: "Chinese Parrot"
+    url: http://parrotnotes.fi
+    email: Chinese.Parrot@student.lab.fi
+  license:
+    name: Creative commons
+    url: https://license.parrotnotes.fi
+
+servers:
+  - url: https://dev.parrotnotes.fi/v1
+    description: Development server
+
+  - url: https://prod.parrotnotes.fi/v1
+    description: Production server
+
+paths:
+  /categories:
+    get:
+      description: Retrieve a list of all categories
+      parameters:
+        - name: page
+          in: query
+          description: "starting page value"
+          schema:
+            type: integer
+            minimum: 0
+            example: 0
+      responses:
+        "200":
+          description: "Successfully retrieved categories"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Categories"
+        "404":
+          description: "No categories found"
+    # get /categories ends
+
+    post:
+      description: Create a new category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryDTO"
+      responses:
+        "201":
+          description: Category created successfully
+    # post /categories ends
+
+  /categories/{category_id}:
+    get:
+      description: Retrieve information of a specific category
+      parameters:
+        - name: category_id
+          in: path
+          required: true
+          description: ID of the requested category
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Successfully retrieved the category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "404":
+          description: The category not found
+    # get /categories/{category_id} ends
+
+    post:
+      description: Create a new task into the category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskDTO"
+      responses:
+        "201":
+          description: A new task created successfully
+    # post /categories/{category_id} ends
+
+  /categories/{category_id}/tasks/{task_id}:
+    get:
+      description: Retrieve information about a single task withing a category
+      parameters:
+        - name: category_id
+          in: path
+          required: true
+          description: ID of the category
+          schema:
+            type: integer
+            example: 1
+        - name: task_id
+          in: path
+          required: true
+          description: ID of the requested task
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Found a task successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "404":
+          description: The task or category was not found
+    # get /categories/{category_id}/tasks/{task_id} ends
+
+  /update_status:
+    put:
+      description: "Update status of all tasks based on their creation dates. Tasks older than 48 hours will be marked as urgent."
+      responses:
+        "200":
+          description: Updated statuses successfully
+        "500":
+          description: Server problem updating status of tasks
+
+# COMPONENTS
+components:
+  schemas:
+    Categories:
+      description: Array of all categories
+      type: array
+      items:
+        $ref: "#/components/schemas/Category"
+    # Categories ends
+
+    Category:
+      description: object containing list of tasks of the category
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 4
+        name:
+          type: string
+          example: Gardening
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+    # Category ends
+
+    Task:
+      description: Task object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        category_id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Water garden plants
+        description:
+          type: string
+          example: details about care of different plant species
+        creationDate:
+          type: string
+          format: date-time
+          example: 2024-10-06T15:46:30Z
+        modificationDate:
+          type: string
+          format: date-time
+          example: 2024-10-06T17:46:30Z
+        dueDate:
+          type: string
+          format: date-time
+          example: 2024-10-14T00:00:00Z
+        status:
+          type: string
+          enum: [armed, fired, done, cancelled]
+          example: armed
+          description: |
+            - **armed**: The task is active and waiting for the due date-time
+            - **fired**: The task's due date has passed.
+            - **done**: The task has been completed.
+            - **cancelled**: The task has been cancelled and will not be fired.
+    # Task ends
+    CategoryDTO:
+      description: Single catgory data transfer object
+      properties:
+        name:
+          type: string
+          example: Gardening
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+    # CategoryDTO ends
+
+    TaskDTO:
+      description: Single task data transfer object
+      properties:
+        category_id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Water garden plants
+        description:
+          type: string
+          example: details about care of different plants
+        creationDate:
+          type: string
+          format: date-time
+          example: 2024-10-06T15:46:30Z
+        modificationDate:
+          type: string
+          format: date-time
+          example: 2024-10-06T17:46:30Z
+        dueDate:
+          type: string
+          format: date-time
+          example: 2024-10-14T00:00:00Z
+    # TaskDTO ends

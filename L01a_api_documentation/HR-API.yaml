@@ -1,0 +1,122 @@
+openapi: 3.0.0
+
+info:
+  version: "1.0.0"
+  title: "HR API"
+  description: "API that allows users to obtain information from the employees"
+  termsOfService: http://smartbear.com/website-terms-of-use
+  contact:
+    name: "Chinese Parrot"
+    url: http://lab.fi
+    email: Chinese.Parrot@student.lab.fi
+  license:
+    name: Creative commons
+    url: https://license.lab.fi
+
+servers:
+  - url: https://dev.lab.fi/v1
+    description: Development server
+
+  - url: https://prod.lab.fi/v1
+    description: Production server
+
+paths:
+  /employees:
+    get:
+      description: Obtain information about employees from the HR database
+      parameters:
+        - name: limit
+          in: query
+          description: "Max amount of employees to return"
+          required: true
+          schema:
+            type: integer
+            minimum: 10
+            example: 50
+        - name: page
+          in: query
+          description: "starting page value"
+          schema:
+            type: integer
+            minimum: 0
+            example: 0
+      responses:
+        "200":
+          description: "Successfull employee info"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employees"
+    post:
+      description: Create a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeDTO"
+      responses:
+        "201":
+          description: Successfully inserted a new employee
+
+  /employees/{id}:
+    get:
+      description: Obtain information about single employees from the HR database
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the requested employee
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "404":
+          description: A employee with a specified ID was not found
+
+components:
+  schemas:
+    Employees:
+      description: Array of employees
+      type: array
+      items:
+        $ref: "#/components/schemas/Employee"
+
+    Employee:
+      description: Single employee object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 4
+        name:
+          type: string
+          example: Joe Biden
+        title:
+          type: string
+          example: dev engineer
+        phone:
+          type: string
+          example: 040-1234567
+
+    EmployeeDTO:
+      description: Single employee data transfer object
+      properties:
+        name:
+          type: string
+          example: Joe Biden
+        title:
+          type: string
+          example: dev engineer
+        phone:
+          type: string
+          example: 040-1234567
