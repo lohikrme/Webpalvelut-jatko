@@ -1,3 +1,6 @@
+// pets.service.ts
+// updated 15th october 2024
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Pet } from './entities/pet.entity';
 import { createPetDto } from './dto/create-pet.dto';
@@ -7,61 +10,58 @@ import { UpdatePetDto } from './dto/update-pet.dto';
 
 @Injectable()
 export class PetsService {
-    // fake DB for pets
-    private pets: Pet[] = [];
+  // fake DB for pets
+  private pets: Pet[] = [];
 
-    insertPet(petData: createPetDto): Pet {
-        const pet = new Pet();
-        pet.id = uuidv4();
-        pet.name = petData.name;
-        pet.species = petData.species;
-        pet.date_of_birth = petData.date_of_birth;
-        pet.description = petData.description;
-        this.pets.push(pet);
-        return pet;
+  insertPet(petData: createPetDto): Pet {
+    const pet = new Pet();
+    pet.id = uuidv4();
+    pet.name = petData.name;
+    pet.species = petData.species;
+    pet.date_of_birth = petData.date_of_birth;
+    pet.description = petData.description;
+    this.pets.push(pet);
+    return pet;
+  }
+
+  getPets(): Pet[] {
+    // return a copy of private pets data, not straight access
+    return [...this.pets];
+  }
+
+  getSinglePet(id: string): Pet {
+    const idx = this.pets.findIndex((pet) => pet.id === id);
+    // if pet not found throw exception
+    if (idx === -1) {
+      throw new NotFoundException('Could not find a matching pet id');
     }
+    return { ...this.pets[idx] };
+  }
 
-    getPets(): Pet[] {
-        // return a copy of private pets data, not straight access
-        return [...this.pets];
+  updatePet(id: string, petData: UpdatePetDto): Pet {
+    const idx = this.pets.findIndex((pet) => pet.id === id);
+    // if pet not found throw exception
+    if (idx === -1) {
+      throw new NotFoundException('Could not find a matching pet id');
     }
+    // use spread syntax to combine old and updated pet data
+    const modifiedPet = { ...this.pets[idx], ...petData };
 
-    getSinglePet(id: string): Pet {
-        const idx = this.pets.findIndex((pet) => pet.id === id);
-        if (idx === -1) {
-            throw new NotFoundException('Could not find a matching pet id');
-        }
-        return { ...this.pets[idx] };
+    // save the modified animal back to DB (this case fake DB)
+    this.pets[idx] = modifiedPet;
+
+    return modifiedPet;
+  }
+
+  deletePet(id: string): Pet {
+    const idx = this.pets.findIndex((pet) => pet.id === id);
+    // if pet is not found throw error
+    if (idx === -1) {
+      throw new NotFoundException('Could not find a matching pet id');
     }
-
-    updatePet(id: string, petData: UpdatePetDto): Pet {
-        const idx = this.pets.findIndex((pet) => pet.id === id);
-        if (idx === -1) {
-            throw new NotFoundException('Could not find a matching pet id');
-        }
-        // first make copy of the original pet and modify it
-
-        /* In java spring it would be:
-        if (petData.getName() != null) {
-            pet.setName(petData.getName());
-        }
-        if (petData.getSpecies() != null) {
-            pet.setSpecies(petData.getSpecies());
-        }
-        if (petData.getDateOfBirth() != null) {
-            pet.setDateOfBirth(petData.getDateOfBirth());
-        }
-        if (petData.getDescription() != null) {
-            pet.setDescription(petData.getDescription());
-        }
-        */
-
-        // in typescript, ... structure does the same:
-        const modifiedPet = { ...this.pets[idx], ...petData };
-
-        // next save the modified animal back to DB (this case fake DB)
-        this.pets[idx] = modifiedPet;
-
-        return modifiedPet;
-    }
+    // if pet is found, return and delete pet
+    const removable_pet = this.pets[idx];
+    this.pets.splice(idx, 1);
+    return removable_pet;
+  }
 }
