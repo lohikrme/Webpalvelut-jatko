@@ -20,3 +20,9 @@ node_modules/.bin/nest generate module photos
 node_modules/.bin/nest generate controller photos
 
 node_modules/.bin/nest generate service photos
+
+npm install --save @nestjs/passport passport passport-local
+
+npm install --save @nestjs/jwt passport-jwt
+
+npm audit fix

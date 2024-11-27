@@ -62,10 +62,11 @@ export class UsersService {
             });
         if(!user) throw new NotFoundException('id not found');
         // make a deep copy with {...<name>} so not access to code
-        return {...user}
+        return {...user};
     }
 
     async findUserByEmail(email: string): Promise<User> {
+        console.log("UserService's findUserByEmail() has started!")
         const user = await this.usersRepository.findOne(
             {
                 where: {"email": email}
