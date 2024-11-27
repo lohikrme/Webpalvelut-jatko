@@ -1,0 +1,14 @@
+
+/* css file contains only minimum styling 
+   the .notes list eleemnt is actually created
+   inside the main.js code rather than static in notes.html
+*/
+
+.container {
+  padding: 10px;
+  border: 1px solid
+}
+
+.notes {
+  color: blue;
+}

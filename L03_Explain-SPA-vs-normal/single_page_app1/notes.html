@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/exampleapp/main.css" />
+  <script type="text/javascript" src="/exampleapp/main.js"></script>
+</head>
+<body>
+  <div class='container'>
+    <h1>Notes</h1>
+    <!-- element with id 'notes' is used dynamically to print stored data-->
+    <div id='notes'>
+    </div>
+    <!--  This tiny form works as a way to add more notes into the database.
+          Data is sent via POST http request to '/exampleapp/new_note' endpoint.
+          There apparently is a separate backend software running elsewhere.
+          One of its endpoints is the POST '/exampleapp/newnote' endpoint, 
+          which receives data from the form below.
+          The other endpoint is the GET '/exampleapp/data.json',
+          which is not visible inside this html file, but used by the main.js file.
+     -->
+    <form action='/exampleapp/new_note' method='POST'>
+      <input type="text" name="note"><br>
+      <input type="submit" value="Save">
+    </form>
+  </div>
+</body>
+</html>

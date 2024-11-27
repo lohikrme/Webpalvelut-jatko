@@ -1,0 +1,22 @@
+
+# change database authentication
+ALTER USER '<USERNAME>'@'<HOST>' IDENTIFIED WITH caching_sha2_password BY '<PASSWORD>';
+
+docker compose up --force-recreate --build -d
+
+docker compose up --force-recreate --build -d
+
+npm install @nestjs/typeorm typeorm mysql2 class-validator class-transformer dotenv
+
+npm install bcrypt
+
+npm install --save-dev @types/bcrypt
+
+npm install @nestjs/mapped-types
+
+
+node_modules/.bin/nest generate module photos
+
+node_modules/.bin/nest generate controller photos
+
+node_modules/.bin/nest generate service photos
