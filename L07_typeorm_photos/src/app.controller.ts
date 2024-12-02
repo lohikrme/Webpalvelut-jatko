@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
-import { JwtAccessToken } from './auth/dto/jwt-access-token.interface';
+import { JwtAccessToken } from './auth/dto_and_strategies/jwt-access-token.interface';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller()

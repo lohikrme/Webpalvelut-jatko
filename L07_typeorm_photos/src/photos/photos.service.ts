@@ -25,6 +25,12 @@ export class PhotosService {
     }
 
     async getPhotos() : Promise<Photo[]> {
-        return await this.photosRepository.find({relations:['user']});
+        console.log("getPhotos() from photos service started!");
+        const photos =  await this.photosRepository.find({relations:['owner']});
+        // remove passwords to not leak
+        photos.forEach( (photo) => {
+            photo.owner.password = ""
+        } );
+        return photos;
     }
 }

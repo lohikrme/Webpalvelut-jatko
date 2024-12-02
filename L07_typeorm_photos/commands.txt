@@ -24,5 +24,6 @@ node_modules/.bin/nest generate service photos
 npm install --save @nestjs/passport passport passport-local
 
 npm install --save @nestjs/jwt passport-jwt
+npm i --save-dev @types/passport-jwt
 
 npm audit fix

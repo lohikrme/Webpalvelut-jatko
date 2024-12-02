@@ -19,8 +19,8 @@ export class CreatePhotoDto {
     @IsNotEmpty()
     url: string;
 
-    // owner_email is used rather than User because
-    // owner email acts a bit like a foreing key
+    // owner_email is used to identify owner of photo
+    // but it is not stored in the database
     @IsEmail()
     @IsNotEmpty()
     owner_email: string;

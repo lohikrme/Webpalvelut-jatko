@@ -1,0 +1,28 @@
+# Start containers
+#
+# start mysql
+# $ docker compose up --force-recreate --build cities-service-database -d
+#
+services:
+  # database definitions
+  cities_service_database:
+    image: mysql
+    restart: always
+    container_name: cities_service_database
+    environment:
+      MYSQL_ROOT_PASSWORD: Koodaus1
+      MYSQL_USER: admin2
+      MYSQL_PASSWORD: Koodaus2
+      MYSQL_DATABASE: cities_service_db
+    networks:
+      - new-project-network
+    # to be able to connect the db outside
+    ports:
+      - '3308:3306'
+    volumes:
+      - cities_service_database:/var/lib/mysql
+networks:
+  new-project-network:
+    name: cities_service_network
+volumes:
+  cities_service_database:

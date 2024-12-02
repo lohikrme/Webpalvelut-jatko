@@ -1,0 +1,13 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CityModel {
+  id: String!
+  name: String!
+  country_code: String!
+}
+
+type Query {
+  getCities: [CityModel!]!
+}
