@@ -9,12 +9,13 @@ export class PhotosController {
     constructor(private readonly photosService: PhotosService){}
 
     @Post()
+    // @UseGuards(JwtAuthGuard)
     async createPhotoUsingEmail(@Body() createPhotoDto: CreatePhotoDto): Promise<Photo> {
         return await this.photosService.insertPhoto(createPhotoDto);
     }
 
     @Get()
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     async getPhotos(): Promise<Photo[]> {
         return await this.photosService.getPhotos();
     }

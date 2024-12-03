@@ -51,14 +51,14 @@ export class UsersService {
 
     async findUsers(): Promise<User[]> {
         // return await this.usersRepository.find();
-        return await this.usersRepository.find({relations: ['profile', 'photos']});
+        return await this.usersRepository.find({relations: ['profile', 'photos', 'photos.categories']});
     }
 
     async findUserById(id: string): Promise<User> {
         const user = await this.usersRepository.findOne(
             {
                 where: {"id": id}, 
-                "relations": ['profile', 'photos']
+                "relations": ['profile', 'photos', 'photos.categories']
             });
         if(!user) throw new NotFoundException('id not found');
         // make a deep copy with {...<name>} so not access to code
