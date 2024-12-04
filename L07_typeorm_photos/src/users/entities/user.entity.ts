@@ -10,30 +10,30 @@ export class User {
     // email is somewhat used to identify and communicate with user
     @Column({unique: true})
     email: string;
+
     @Column()
     password: string;
+
     @Column()
     name: string;
+
     @CreateDateColumn()
     createdAt: Date;
+
     @UpdateDateColumn()
     modifiedAt: Date;
 
-    // profile row of users datatable
-    // first param returns entity that relation refers to aka Profile
-    // second param defines how profiles table is linked to users with profile.user
-        // basically, orm automatically creates a foreign key
-    // third parameter, the js object cascade true means that
-        // all changes to user automatically apply also to a connected profile
+    // one user can have one profile
+    // '() => Profile' means that the OneToOne relation refers to Profile
+    // '(profile) => profile.user' defines how orm creates a foreign key
+    // idea is that foreign key is mirrored in both entity files
+    // '{cascade: true}' means that also profile is deleted when user is deleted
     @OneToOne( () => Profile, (profile) => profile.user, {cascade: true})
     @JoinColumn()
     profile: Profile;
 
     // one user can have many photos
-    // first param returns entity that relation refers to aka Photo
-    // second param defines how photos table is linked to users with photo.owner
-        // basically, orm automatically creates a foreign key
-    @OneToMany( ()=> Photo, (photo) => photo.owner)
+    @OneToMany( ()=> Photo, (photo) => photo.owner, {cascade: true})
     photos: Photo[]
 }
 

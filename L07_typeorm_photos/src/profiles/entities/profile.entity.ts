@@ -13,11 +13,18 @@ export class Profile {
     @Column()
     @IsUrl()
     photo: string;
+
     @CreateDateColumn()
     createdAt: Date
+
     @UpdateDateColumn()
     modifiedAt: Date;
 
-    @OneToOne(() => User, (user) => user.profile)
+    // one profile can have one user
+    // '() => User' means that the OneToOne relation refers to User
+    // '(user) => user.profile' defines how orm creates a foreign key
+    // idea is that foreign key is mirrored in both entity files
+    // '{onDelete: 'CASCADE'}' means that also profile is deleted when user is deleted
+    @OneToOne(() => User, (user) => user.profile, {onDelete: 'CASCADE'})
     user: User;
 }

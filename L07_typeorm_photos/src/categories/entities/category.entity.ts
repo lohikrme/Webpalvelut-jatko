@@ -8,7 +8,7 @@ export class Category {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({unique: true})
     name: string;
 
     @Column()
@@ -20,6 +20,7 @@ export class Category {
     @UpdateDateColumn()
     modifiedAt: Date;
 
+    // many categories can have many photos
     @ManyToMany( () => Photo, (photo) => photo.categories)
     photos: Photo[]
 }
