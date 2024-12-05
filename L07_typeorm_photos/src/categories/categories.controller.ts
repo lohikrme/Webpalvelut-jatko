@@ -64,7 +64,7 @@ export class CategoriesController {
         return await this.categoriesService.updateCategoryById(id, updateCategoryDto);
     }
 
-    @Delete()
+    @Delete(':id')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({summary: "Delete a category."})
