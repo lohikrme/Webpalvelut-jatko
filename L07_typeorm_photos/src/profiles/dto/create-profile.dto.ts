@@ -1,15 +1,21 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsOptional, IsString, IsUrl } from "class-validator";
 
 export class CreateProfileDto {
     
     // male or female or undefinied?
     @IsString()
-    @IsNotEmpty()
-    gender: string;
+    @IsOptional()
+    gender: string = "unknown";
 
     // is the url address to photo
     @IsString()
-    @IsNotEmpty()
-    photo: string;
+    @IsOptional()
+    @IsUrl()
+    photo: string = "empty-user-photo";
+
+    // owner_email is used to identify owner of profile
+    // but it is not stored in the database
+    @IsEmail()
+    owner_email: string;
 
 }

@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "src/users/entities/user.entity";
 import { IsUrl } from "class-validator";
 
@@ -26,5 +26,6 @@ export class Profile {
     // idea is that foreign key is mirrored in both entity files
     // '{onDelete: 'CASCADE'}' means that also profile is deleted when user is deleted
     @OneToOne(() => User, (user) => user.profile, {onDelete: 'CASCADE'})
+    @JoinColumn()
     user: User;
 }

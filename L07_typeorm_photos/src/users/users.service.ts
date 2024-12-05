@@ -7,14 +7,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateProfileDto } from 'src/profiles/dto/update-profile.dto';
 
 @Injectable()
 export class UsersService {
 
     private slatRounds = 10;
 
-    constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>,
-        private readonly profilesService: ProfilesService) {}
+    constructor(@InjectRepository(User) 
+        private readonly usersRepository: Repository<User>,
+        private readonly profilesService: ProfilesService,
+        @InjectRepository(Profile) private readonly profilesRepository: Repository<Profile>) {}
     
 
     async insertUser(createUserDto: CreateUserDto) : Promise<User> {
@@ -87,11 +90,31 @@ export class UsersService {
         const user = await this.usersRepository.findOne(
             {
                 where: {"id": input_id}, 
-                "relations": ['profile', 'photos', 'photos.categories']
+                relations: ['profile', 'photos', 'photos.categories'],
+                select: {
+                    id: true,
+                    email: true,
+                    name: true,
+                    createdAt: true,
+                    modifiedAt: true,
+                    profile: {
+                        id: true,
+                        gender: true,
+                        photo: true
+                    },
+                    photos: {
+                        id: true,
+                        name: true,
+                        url: true,
+                        categories: {
+                            id: true,
+                            name: true
+                        }
+                    }
+                }
             }
         );
         if(!user) throw new NotFoundException(`User not found with id ${input_id}`);
-        // make a deep copy with {...<name>} so not access to code
         return user;
     }
 
@@ -100,31 +123,120 @@ export class UsersService {
         console.log("findUserByEmail() from users service has started!")
         const user = await this.usersRepository.findOne(
             {
-                where: {"email": email}
+                where: {"email": email},
+                relations: ['profile', 'photos', 'photos.categories'],
+                select: {
+                    id: true,
+                    email: true,
+                    name: true,
+                    createdAt: true,
+                    modifiedAt: true,
+                    profile: {
+                        id: true,
+                        gender: true,
+                        photo: true
+                    },
+                    photos: {
+                        id: true,
+                        name: true,
+                        url: true,
+                        categories: {
+                            id: true,
+                            name: true
+                        }
+                    }
+                }
             });
         if(!user) throw new NotFoundException(`User not found with email ${email}`);
-        // make a deep copy with {...<name>} so not access to code
         return user;
     }
 
 
     async updateUserById(input_id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        console.log("updateUserById() from users service started!");
-        console.log(JSON.stringify(updateUserDto));
-        if (updateUserDto.password) {
-            const hashedPassword = await bcrypt.hash(updateUserDto.password, this.slatRounds);
-            updateUserDto.password = hashedPassword;
-        }
-        await this.usersRepository.update({id: input_id}, updateUserDto);
-        const user = await this.usersRepository.findOne(
-            {
-                where: {"id": input_id}, 
-                "relations": ['profile', 'photos', 'photos.categories']
+        try {
+            console.log("updateUserById() from users service started!");
+            console.log(JSON.stringify(updateUserDto));
+            
+            // split data so profile and other data is separate
+            const { profile, ...updateData } = updateUserDto;
+            
+            // if contains password, hash before saving it
+            if (updateData.password) {
+                const hashedPassword = await bcrypt.hash(updateData.password, this.slatRounds);
+                updateData.password = hashedPassword;
             }
-        );
-        if(!user) throw new NotFoundException(`User not found with id ${input_id}`);
-        return user;
+            
+            await this.usersRepository.update({ id: input_id }, updateData);
+            
+            // if input contains a profile, update also profile content (gender, photo url)...
+            if (profile && profile.owner_email) {
+                console.log(JSON.stringify(profile));
+                // find the profile of the user
+                const user_profile = await this.usersRepository.findOne({ 
+                    where: { email: profile.owner_email },
+                    relations: ['profile']
+                });
+                // make sure just in case that profile was found with the owner_email
+                if (!user_profile) {
+                    throw new NotFoundException(`User profile was not not found with email ${profile.owner_email}`);
+                }
+                console.log(JSON.stringify(user_profile));
+
+                // find the updateable profile usinng profilesRepository to update
+                const updateable_profile = await this.profilesRepository.findOne({
+                    where: { id: user_profile.profile.id }
+                });
+
+                // update the profile
+                Object.assign(updateable_profile, profile);
+                await this.profilesRepository.save(updateable_profile);
+            }
+            // there was profile but not owner email, so info user that profile cannot be updated
+            else if (profile && !profile.owner_email) {
+                    throw new NotFoundException("To update profile, there must always be owner_email");
+            }
+            
+            // find updated user and return
+            const user = await this.usersRepository.findOne({
+                where: { id: input_id },
+                relations: ['profile', 'photos', 'photos.categories'],
+                select: {
+                    id: true,
+                    email: true,
+                    name: true,
+                    createdAt: true,
+                    modifiedAt: true,
+                    profile: {
+                        id: true,
+                        gender: true,
+                        photo: true
+                    },
+                    photos: {
+                        id: true,
+                        name: true,
+                        url: true,
+                        categories: {
+                            id: true,
+                            name: true
+                        }
+                    }
+                }
+            });
+            if (!user) {
+                throw new Error("User not found");
+            }
+            return user;
+        } catch (err) {
+            // Re-throw NotFoundException to be handled by the caller
+            // typical case: owner_email missing from profile
+            if (err instanceof NotFoundException) {
+                throw err; 
+            }
+            console.error("Error updating user:", err);
+            throw new Error("Unable to update the user");
+        }
     }
+
 
 
     async deleteUserById(input_id: string): Promise<User> {
