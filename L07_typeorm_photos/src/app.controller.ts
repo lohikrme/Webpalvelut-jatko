@@ -3,6 +3,8 @@ import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { JwtAccessToken } from './auth/dto_and_strategies/jwt-access-token.interface';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { LoginDto } from './auth/dto_and_strategies/login.dto';
 
 @Controller()
 export class AppController {
@@ -11,6 +13,7 @@ export class AppController {
   ) {}
 
   @Get()
+  @ApiOperation({summary: "This endpoint is just a simple hello world test endpoint."})
   getHello(): string {
     console.log("Hello world!")
     return this.appService.getHello();
@@ -22,7 +25,9 @@ export class AppController {
   // and AuthGuard adds the received user object into request
   
   @UseGuards(AuthGuard('local'))
+  @ApiBody({type: LoginDto})
   @Post('login')
+  @ApiOperation({summary: "To login in. Giving correct email and password are responded with a jwt bearer token to author other endpoints."})
   async login(@Request() req): Promise<JwtAccessToken> {
     console.log('AuthGuard passed');
     console.log(JSON.stringify(req.body))

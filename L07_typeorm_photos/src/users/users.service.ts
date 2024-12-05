@@ -131,6 +131,7 @@ export class UsersService {
                     name: true,
                     createdAt: true,
                     modifiedAt: true,
+                    password: true,
                     profile: {
                         id: true,
                         gender: true,
@@ -206,6 +207,7 @@ export class UsersService {
                     name: true,
                     createdAt: true,
                     modifiedAt: true,
+                    password: true,
                     profile: {
                         id: true,
                         gender: true,

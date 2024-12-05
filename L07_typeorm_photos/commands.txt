@@ -27,3 +27,5 @@ npm install --save @nestjs/jwt passport-jwt
 npm i --save-dev @types/passport-jwt
 
 npm audit fix
+
+npm install --save @nestjs/swagger
