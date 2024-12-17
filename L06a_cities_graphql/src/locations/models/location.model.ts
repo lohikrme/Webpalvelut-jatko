@@ -5,6 +5,7 @@
 // schemas are automatically generated during build
 
 import { Field, ObjectType } from "@nestjs/graphql";
+import { CityModel } from "src/cities/models/city.model";
 
 @ObjectType()
 export class LocationModel {
@@ -20,5 +21,8 @@ export class LocationModel {
 
     @Field()
     streetAddress: string;
+
+    @Field(() => CityModel)
+    city: CityModel;
 
 }

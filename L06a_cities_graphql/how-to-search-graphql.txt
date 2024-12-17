@@ -1,0 +1,42 @@
+
+// to get all cities, use next:
+query GetCities {
+  getCities {
+    id
+    name
+    country_code
+    locations {
+      id
+      name
+      description
+      streetAddress
+    }
+  }
+}
+
+
+// to get locations of a city
+query GetLocationsOfCity {
+	getLocationsOfCity(cityName: "Lahti") {
+		id
+		name
+		description
+		streetAddress
+	}
+}
+
+
+
+query GetLocations {
+	getLocations {
+		id
+		name
+		description
+		streetAddress
+		city {
+			id
+			name
+			country_code
+		}
+	}
+}

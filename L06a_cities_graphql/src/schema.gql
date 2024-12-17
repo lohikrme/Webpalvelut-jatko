@@ -2,12 +2,69 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Location {
+  id: ID!
+  name: String!
+  description: String!
+  streetAddress: String!
+  city: City
+}
+
+type City {
+  id: String!
+  name: String!
+  country_code: String!
+  locations: [Location!]!
+}
+
+type LocationModel {
+  id: String!
+  name: String!
+  description: String!
+  streetAddress: String!
+  city: CityModel!
+}
+
 type CityModel {
   id: String!
   name: String!
   country_code: String!
+  locations: [LocationModel!]
 }
 
 type Query {
   getCities: [CityModel!]!
+  getLocations: [LocationModel!]!
+  getLocationsOfCity(cityName: String!): [LocationModel!]!
+}
+
+type Mutation {
+  createCity(createCityInput: CreateCityDto!): CityModel!
+  updateCity(updateCityInput: UpdateCityDto!): CityModel!
+  createLocation(cityName: String!, createLocationInput: CreateLocationDto!): LocationModel!
+  updateLocation(updateLocationInput: UpdateLocationDto!): LocationModel!
+}
+
+input CreateCityDto {
+  name: String!
+  country_code: String!
+}
+
+input UpdateCityDto {
+  name: String
+  country_code: String
+  id: String!
+}
+
+input CreateLocationDto {
+  name: String!
+  description: String!
+  streetAddress: String!
+}
+
+input UpdateLocationDto {
+  name: String
+  description: String
+  streetAddress: String
+  id: String!
 }
