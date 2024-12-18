@@ -43,7 +43,7 @@ export class LocationsService {
     }
 
 
-    async update(locationId: string, updateLocationDto: UpdateLocationDto)/*: Promise<Location>*/ {
+    async update(locationId: string, updateLocationDto: UpdateLocationDto): Promise<any> {
         const location = await this.locationRepository.preload({
             id: locationId,
             ...updateLocationDto,
@@ -52,7 +52,18 @@ export class LocationsService {
           if (!location) {
             throw new NotFoundException(`Location with ID ${locationId} not found`);
           }
-          return this.locationRepository.save(location);
+          return await this.locationRepository.save(location);
+    }
+
+
+    async delete(locationId: string): Promise<any> {
+        const location = await this.locationRepository.findOneBy({id: locationId});
+        console.log(location);
+        if (!location) {
+            throw new NotFoundException(`Location with ID ${locationId} not found`);
+        }
+        await this.locationRepository.delete(location);
+        return location;
     }
 
 

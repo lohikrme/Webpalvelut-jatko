@@ -41,8 +41,10 @@ type Query {
 type Mutation {
   createCity(createCityInput: CreateCityDto!): CityModel!
   updateCity(updateCityInput: UpdateCityDto!): CityModel!
+  deleteCity(deleteCityId: String!): CityModel!
   createLocation(cityName: String!, createLocationInput: CreateLocationDto!): LocationModel!
   updateLocation(updateLocationInput: UpdateLocationDto!): LocationModel!
+  deleteLocation(deleteLocationId: String!): LocationModel!
 }
 
 input CreateCityDto {

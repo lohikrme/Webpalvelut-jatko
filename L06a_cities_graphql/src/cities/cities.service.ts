@@ -25,18 +25,28 @@ export class CitiesService {
     }
 
     async findCityByName(cityName: string) : Promise<City> {
-       return await this.citiesRepository.findOne({where: {name: cityName}});
+      return await this.citiesRepository.findOne({where: {name: cityName}});
     }
 
     async update(id: string, updateCityDto: UpdateCityDto): Promise<City> {
-        const city = await this.citiesRepository.preload({
+      const city = await this.citiesRepository.preload({
           id: id,
           ...updateCityDto,
-        });
-        if (!city) {
-          throw new NotFoundException(`City with ID ${id} not found`);
-        }
-        return this.citiesRepository.save(city);
+      });
+      if (!city) {
+        throw new NotFoundException(`City with ID ${id} not found`);
+      }
+      return this.citiesRepository.save(city);
+    }
+
+    
+    async delete(cityId: string): Promise<City> {
+      const city = await this.citiesRepository.findOneBy({id: cityId});
+      if (!city) {
+        throw new NotFoundException(`City with ID ${cityId} not found`);
+      }
+      await this.citiesRepository.delete(city);
+      return city;
     }
 }
 

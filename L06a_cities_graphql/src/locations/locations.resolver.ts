@@ -30,6 +30,11 @@ export class LocationsResolver {
     async updateLocation(@Args('updateLocationInput') updateLocationInput: UpdateLocationDto): Promise<LocationModel> {
         return this.locationsService.update(updateLocationInput.id, updateLocationInput);
     }
+
+    @Mutation(() => LocationModel)
+    async deleteLocation(@Args('deleteLocationId') locationId: string): Promise<LocationModel> {
+        return this.locationsService.delete(locationId);
+    }
     
 
     

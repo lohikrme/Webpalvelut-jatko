@@ -24,6 +24,11 @@ export class CitiesResolver {
         return this.citiesService.update(updateCityInput.id, updateCityInput);
     }
 
+    @Mutation(() => CityModel)
+    async deleteCity(@Args('deleteCityId') cityId: string): Promise<CityModel> {
+        return this.citiesService.delete(cityId);
+    }
+
 
 
 }
